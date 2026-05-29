@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import TimerView from './views/TimerView'
 import DashboardView from './views/DashboardView'
+import CalendarView from './views/CalendarView'
 import HistoryView from './views/HistoryView'
 import SettingsView from './views/SettingsView'
+import SkylineView from './views/SkylineView'
 
-type ViewId = 'timer' | 'dashboard' | 'history' | 'settings'
+type ViewId = 'timer' | 'dashboard' | 'calendar' | 'history' | 'skyline' | 'settings'
 
 interface NavItem {
   id: ViewId
@@ -15,7 +17,9 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { id: 'timer', label: 'Timer', icon: '◷' },
   { id: 'dashboard', label: 'Dashboard', icon: '◈' },
+  { id: 'calendar', label: 'Calendar', icon: '▦' },
   { id: 'history', label: 'History', icon: '◫' },
+  { id: 'skyline', label: 'Skyline', icon: '◈' },
   { id: 'settings', label: 'Settings', icon: '◌' },
 ]
 
@@ -87,10 +91,12 @@ export default function App() {
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 overflow-y-auto bg-[#0a0a0a]">
+      <main className="flex-1 overflow-hidden bg-[#0a0a0a] flex flex-col">
         {activeView === 'timer' && <TimerView />}
         {activeView === 'dashboard' && <DashboardView />}
+        {activeView === 'calendar' && <CalendarView />}
         {activeView === 'history' && <HistoryView />}
+        {activeView === 'skyline' && <SkylineView />}
         {activeView === 'settings' && <SettingsView />}
       </main>
     </div>

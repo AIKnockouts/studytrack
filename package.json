@@ -12,10 +12,14 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "@react-three/drei": "^10.7.7",
+    "@react-three/fiber": "^9.6.1",
+    "@types/three": "^0.184.1",
     "better-sqlite3": "^12.10.0",
     "howler": "^2.2.4",
     "node-notifier": "^10.0.1",
     "recharts": "^2.12.7",
+    "three": "^0.184.0",
     "uuid": "^9.0.1",
     "zustand": "^4.5.2"
   },
