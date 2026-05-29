@@ -165,11 +165,11 @@ const TimerView: React.FC = () => {
 
   // ---- render ----------------------------------------------------------------
   return (
-    <div className="min-h-screen flex flex-col items-center justify-start bg-gray-50 dark:bg-gray-900 px-4 py-8">
+    <div className="min-h-screen flex flex-col items-center justify-start bg-[#0a0a0a] px-4 py-10">
       {/* Toast */}
       {toast && (
         <div
-          className="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-5 py-2 rounded-full bg-indigo-600 text-white text-sm font-medium shadow-lg pointer-events-none"
+          className="fixed top-6 left-1/2 -translate-x-1/2 z-50 px-5 py-2 rounded-full bg-[var(--accent-color)] text-white text-sm font-medium pointer-events-none"
           role="status"
           aria-live="polite"
         >
@@ -177,14 +177,14 @@ const TimerView: React.FC = () => {
         </div>
       )}
 
-      <div className="w-full max-w-sm flex flex-col gap-6">
+      <div className="w-full max-w-sm flex flex-col gap-8">
         {/* Phase indicator */}
         <div className="text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400 mb-1">
+          <p className="text-xs uppercase tracking-widest text-[#555555] mb-1">
             {PHASE_LABELS[timer.phase]}
           </p>
           {timer.phase === 'work' && (
-            <p className="text-sm text-gray-400 dark:text-gray-500">
+            <p className="text-xs text-[#555555]">
               Session {timer.workSessionsCompleted + 1}
             </p>
           )}
@@ -192,8 +192,7 @@ const TimerView: React.FC = () => {
 
         {/* Circular countdown */}
         <div
-          className="w-64 h-64 mx-auto text-gray-800 dark:text-gray-100"
-          style={{ color: undefined }}
+          className="w-60 h-60 mx-auto text-[#f5f5f5]"
         >
           <CircularCountdown
             elapsed={timer.elapsed}
@@ -212,17 +211,17 @@ const TimerView: React.FC = () => {
         />
 
         {/* Control buttons */}
-        <div className="flex gap-3">
+        <div className="flex gap-2">
           {timer.state === 'idle' && (
             <div className="relative flex-1 group">
               <button
                 onClick={handleStart}
                 disabled={!timer.selectedCategoryId}
                 className={[
-                  'w-full px-4 py-3 rounded-lg text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2',
+                  'w-full px-4 py-2.5 rounded-lg text-sm font-medium transition-opacity focus:outline-none',
                   timer.selectedCategoryId
-                    ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                    : 'bg-indigo-300 dark:bg-indigo-800 text-white cursor-not-allowed',
+                    ? 'bg-[var(--accent-color)] text-white hover:opacity-90'
+                    : 'bg-[#1a1a1a] text-[#555555] cursor-not-allowed',
                 ]
                   .join(' ')
                   .trim()}
@@ -230,7 +229,7 @@ const TimerView: React.FC = () => {
                 Start
               </button>
               {!timer.selectedCategoryId && (
-                <span className="absolute -top-9 left-1/2 -translate-x-1/2 px-2 py-1 rounded bg-gray-800 text-white text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                <span className="absolute -top-9 left-1/2 -translate-x-1/2 px-2 py-1 rounded-lg bg-[#1a1a1a] border border-[#222222] text-[#888888] text-xs whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                   Select a subject first
                 </span>
               )}
@@ -241,13 +240,13 @@ const TimerView: React.FC = () => {
             <>
               <button
                 onClick={() => timer.pause()}
-                className="flex-1 px-4 py-3 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-transparent border border-[#333333] text-[#f5f5f5] text-sm font-medium hover:bg-[#1a1a1a] transition-colors focus:outline-none"
               >
                 Pause
               </button>
               <button
                 onClick={handleStop}
-                className="px-4 py-3 rounded-lg border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
+                className="px-4 py-2.5 rounded-lg border border-[#333333] text-[#888888] hover:text-red-400 hover:border-red-500/30 text-sm font-medium transition-colors focus:outline-none"
               >
                 Stop
               </button>
@@ -258,13 +257,13 @@ const TimerView: React.FC = () => {
             <>
               <button
                 onClick={() => timer.resume()}
-                className="flex-1 px-4 py-3 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                className="flex-1 px-4 py-2.5 rounded-lg bg-[var(--accent-color)] text-white text-sm font-medium hover:opacity-90 transition-opacity focus:outline-none"
               >
                 Resume
               </button>
               <button
                 onClick={handleStop}
-                className="px-4 py-3 rounded-lg border border-red-300 dark:border-red-700 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-red-400 focus:ring-offset-2"
+                className="px-4 py-2.5 rounded-lg border border-[#333333] text-[#888888] hover:text-red-400 hover:border-red-500/30 text-sm font-medium transition-colors focus:outline-none"
               >
                 Stop
               </button>
@@ -274,7 +273,7 @@ const TimerView: React.FC = () => {
           {showNextPhaseButton && (
             <button
               onClick={handleNextPhase}
-              className="flex-1 px-4 py-3 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+              className="flex-1 px-4 py-2.5 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-sm font-medium hover:bg-emerald-500/20 transition-colors focus:outline-none"
             >
               {NEXT_PHASE_LABELS[timer.phase]}
             </button>
@@ -283,10 +282,10 @@ const TimerView: React.FC = () => {
 
         {/* Note section — shown after completed or abandoned (with a saved session) */}
         {showNoteSection && (
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 flex flex-col gap-3 shadow-sm">
-            <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+          <div className="rounded-xl border border-[#222222] bg-[#111111] p-4 flex flex-col gap-3">
+            <p className="text-sm font-medium text-[#f5f5f5]">
               {timer.state === 'completed' ? 'Session complete!' : 'Session logged.'}{' '}
-              <span className="font-normal text-gray-500 dark:text-gray-400">
+              <span className="font-normal text-[#888888]">
                 Add a note?
               </span>
             </p>
@@ -301,7 +300,7 @@ const TimerView: React.FC = () => {
 
         {/* Completed — show next phase once note is dismissed */}
         {timer.state === 'completed' && !showNoteSection && (
-          <p className="text-center text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-center text-xs text-[#555555]">
             Great work! Ready for the next phase.
           </p>
         )}

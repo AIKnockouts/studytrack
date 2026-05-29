@@ -47,11 +47,11 @@ export default function HistoryView() {
     <div className="flex flex-col gap-6 p-6 max-w-7xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Session History</h1>
+        <h1 className="text-xl font-semibold text-[#f5f5f5]">Session History</h1>
         <button
           type="button"
           onClick={handleExport}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 active:bg-indigo-700 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium bg-transparent border border-[#333333] text-[#f5f5f5] rounded-lg hover:bg-[#1a1a1a] transition-colors focus:outline-none"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

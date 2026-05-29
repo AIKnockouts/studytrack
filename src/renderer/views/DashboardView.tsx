@@ -322,9 +322,9 @@ function heatmapRangeToWeeks(heatmapRange: string, sessions: Session[]): number 
 // ─── Skeleton Component ───────────────────────────────────────────────────────
 
 const SkeletonCard: React.FC = () => (
-  <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 animate-pulse shadow-sm">
-    <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-20 mb-3" />
-    <div className="h-7 bg-gray-200 dark:bg-gray-700 rounded w-28" />
+  <div className="bg-[#111111] rounded-xl border border-[#222222] p-4 animate-pulse">
+    <div className="h-3 bg-[#1a1a1a] rounded w-20 mb-3" />
+    <div className="h-7 bg-[#1a1a1a] rounded w-28" />
   </div>
 )
 
@@ -392,13 +392,13 @@ const DashboardView: React.FC = () => {
   // ─── Render ─────────────────────────────────────────────────────────────────
 
   return (
-    <div className="flex flex-col h-full overflow-y-auto bg-gray-50 dark:bg-gray-900">
+    <div className="flex flex-col h-full overflow-y-auto bg-[#0a0a0a]">
       <div className="max-w-6xl mx-auto w-full px-6 py-6 flex flex-col gap-6">
 
         {/* Header + time range selector */}
         <div className="flex items-center justify-between flex-wrap gap-3">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
-          <div className="flex gap-1 p-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm">
+          <h1 className="text-xl font-semibold text-[#f5f5f5]">Dashboard</h1>
+          <div className="flex gap-0.5 p-1 bg-[#111111] border border-[#222222] rounded-lg">
             {TIME_RANGE_OPTIONS.map((opt) => (
               <button
                 key={opt.value}
@@ -406,8 +406,8 @@ const DashboardView: React.FC = () => {
                 className={[
                   'px-3 py-1.5 text-sm rounded-md font-medium transition-colors',
                   timeRange === opt.value
-                    ? 'text-white shadow-sm'
-                    : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700',
+                    ? 'text-white'
+                    : 'text-[#888888] hover:text-[#f5f5f5] hover:bg-[#1a1a1a]',
                 ].join(' ')}
                 style={timeRange === opt.value ? { backgroundColor: accentColor } : {}}
               >
@@ -428,36 +428,36 @@ const DashboardView: React.FC = () => {
               label="Total Time"
               value={totalMinutes > 0 ? formatTime(totalMinutes) : '—'}
               subLabel={timeRangeLabel(timeRange)}
-              icon={<span>⏱</span>}
+              icon={<span>◷</span>}
             />
             <StatCard
               label="Total Sessions"
               value={String(totalSessions)}
               subLabel={timeRangeLabel(timeRange)}
-              icon={<span>📚</span>}
+              icon={<span>◈</span>}
             />
             <StatCard
               label="Current Streak"
               value={`${currentStreak} day${currentStreak !== 1 ? 's' : ''}`}
               subLabel="consecutive days"
-              icon={<span>🔥</span>}
+              icon={<span>◆</span>}
             />
             <StatCard
               label="Longest Streak"
               value={`${longestStreak} day${longestStreak !== 1 ? 's' : ''}`}
               subLabel="all time"
-              icon={<span>🏆</span>}
+              icon={<span>◇</span>}
             />
           </div>
         )}
 
         {/* Heatmap */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 shadow-sm">
-          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">
+        <div className="bg-[#111111] rounded-xl border border-[#222222] p-5">
+          <h2 className="text-sm font-medium text-[#f5f5f5] mb-4">
             Study Activity
           </h2>
           {isLoading ? (
-            <div className="h-28 animate-pulse bg-gray-100 dark:bg-gray-700 rounded-lg" />
+            <div className="h-28 animate-pulse bg-[#1a1a1a] rounded-lg" />
           ) : (
             <div className="overflow-x-auto">
               <HeatmapGrid
@@ -474,12 +474,12 @@ const DashboardView: React.FC = () => {
         {/* Charts row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {/* Stacked Bar Chart */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 shadow-sm">
-            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-4">
+          <div className="bg-[#111111] rounded-xl border border-[#222222] p-5">
+            <h2 className="text-sm font-medium text-[#f5f5f5] mb-4">
               Daily Activity (Last 14 Days)
             </h2>
             {isLoading ? (
-              <div className="h-48 animate-pulse bg-gray-100 dark:bg-gray-700 rounded-lg" />
+              <div className="h-48 animate-pulse bg-[#1a1a1a] rounded-lg" />
             ) : (
               <StackedBarChart
                 data={stackedBarData}
@@ -489,12 +489,12 @@ const DashboardView: React.FC = () => {
           </div>
 
           {/* Donut Chart */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 shadow-sm">
-            <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+          <div className="bg-[#111111] rounded-xl border border-[#222222] p-5">
+            <h2 className="text-sm font-medium text-[#f5f5f5] mb-2">
               Time by Subject
             </h2>
             {isLoading ? (
-              <div className="h-48 animate-pulse bg-gray-100 dark:bg-gray-700 rounded-lg" />
+              <div className="h-48 animate-pulse bg-[#1a1a1a] rounded-lg" />
             ) : (
               <DonutChart data={donutData} />
             )}
@@ -503,11 +503,11 @@ const DashboardView: React.FC = () => {
 
         {/* Subject Table */}
         <div>
-          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3">
+          <h2 className="text-sm font-medium text-[#f5f5f5] mb-3">
             Subjects
           </h2>
           {isLoading ? (
-            <div className="h-40 animate-pulse bg-gray-100 dark:bg-gray-700 rounded-xl" />
+            <div className="h-40 animate-pulse bg-[#111111] rounded-xl" />
           ) : (
             <SubjectTable
               stats={perSubjectStats}

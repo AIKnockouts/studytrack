@@ -120,8 +120,9 @@ describe('PluginManager', () => {
     expect(good!.error).toBeUndefined()
   })
 
-  it('plugin without read:sessions permission calls api.sessions.getAll: throws with permission message', async () => {
-    let capturedApi: any = null
+  it('plugin without read:sessions permission calls api.sessions.getAll: throws/rejects with permission message', async () => {
+    // api.sessions.getAll() throws synchronously (before returning a Promise) when permission is missing.
+    // The plugin wraps the call in try/catch to record the error into storage.
     makePlugin(
       pluginsDir,
       'no-perm',
@@ -129,26 +130,28 @@ describe('PluginManager', () => {
       `
       module.exports = {
         onLoad() {
-          api.sessions.getAll().catch(err => { global.__permError = err.message })
+          try {
+            api.sessions.getAll()
+            api.storage.set('result', 'resolved')
+          } catch(err) {
+            api.storage.set('result', err.message)
+          }
         }
       }
       `
     )
     const pm = new PluginManager()
     pm.load(pluginsDir)
-    // Give async a tick
-    await new Promise((r) => setTimeout(r, 10))
-    // The api should reject; we test by verifying the rejection path
-    // Since we can't easily intercept internal errors, verify that getAll rejects via direct api call
-    // Get the internal api by building one — instead, test via a sync throw approach
+    await new Promise((r) => setTimeout(r, 20))
     const installed = pm.getInstalled()
     expect(installed).toHaveLength(1)
-    // The plugin loaded but the api.sessions.getAll should have thrown
-    // We verify this by trying to call it directly: buildApi is private, so test via a wrapper plugin
+    const { pluginStorageGet } = await import('../../src/main/database')
+    const result = pluginStorageGet('no-perm', 'result') as string | undefined
+    expect(result).toBeDefined()
+    expect(result).toMatch(/permission/i)
   })
 
   it('plugin with read:sessions permission calls api.sessions.getAll: resolves with array', async () => {
-    let resolved = false
     makePlugin(
       pluginsDir,
       'has-perm',
@@ -156,8 +159,41 @@ describe('PluginManager', () => {
       `
       module.exports = {
         onLoad() {
-          api.sessions.getAll().then(result => {
-            if (Array.isArray(result)) global.__sessionsResolved = true
+          api.sessions.getAll().then(
+            (result) => { api.storage.set('isArray', Array.isArray(result) ? 'yes' : 'no') },
+            (err) => { api.storage.set('isArray', 'error: ' + err.message) }
+          )
+        }
+      }
+      `
+    )
+    const pm = new PluginManager()
+    pm.load(pluginsDir)
+    await new Promise((r) => setTimeout(r, 20))
+    const installed = pm.getInstalled()
+    expect(installed[0].error).toBeUndefined()
+    const { pluginStorageGet } = await import('../../src/main/database')
+    const result = pluginStorageGet('has-perm', 'isArray')
+    expect(result).toBe('yes')
+  })
+
+  it('plugin storage isolation: pluginA sets key, pluginB getting key → undefined', async () => {
+    makePlugin(
+      pluginsDir,
+      'plugin-a',
+      { id: 'plugin-a', name: 'plugin-a', version: '0.1.0', description: '', author: '', main: 'index.js', permissions: [], settings_schema: [] },
+      `module.exports = { onLoad() { api.storage.set('shared-key', 'val-from-a') } }`
+    )
+    makePlugin(
+      pluginsDir,
+      'plugin-b',
+      { id: 'plugin-b', name: 'plugin-b', version: '0.1.0', description: '', author: '', main: 'index.js', permissions: [], settings_schema: [] },
+      `
+      module.exports = {
+        onLoad() {
+          api.storage.get('shared-key').then(v => {
+            // store whether it was undefined or not, using a flag key
+            api.storage.set('saw-key', v === undefined ? 'undefined' : 'defined')
           })
         }
       }
@@ -165,31 +201,11 @@ describe('PluginManager', () => {
     )
     const pm = new PluginManager()
     pm.load(pluginsDir)
-    await new Promise((r) => setTimeout(r, 10))
-    // The plugin ran, no errors
-    const installed = pm.getInstalled()
-    expect(installed[0].error).toBeUndefined()
-  })
-
-  it('plugin storage isolation: pluginA sets key, pluginB getting key → undefined', async () => {
-    let bValue: unknown = 'initial'
-    makePlugin(
-      pluginsDir,
-      'plugin-a',
-      { id: 'plugin-a', name: 'plugin-a', version: '0.1.0', description: '', author: '', main: 'index.js', permissions: [], settings_schema: [] },
-      `module.exports = { onLoad() { api.storage.set('key', 'val') } }`
-    )
-    makePlugin(
-      pluginsDir,
-      'plugin-b',
-      { id: 'plugin-b', name: 'plugin-b', version: '0.1.0', description: '', author: '', main: 'index.js', permissions: [], settings_schema: [] },
-      `module.exports = { onLoad() { api.storage.get('key').then(v => { global.__pluginBValue = v }) } }`
-    )
-    const pm = new PluginManager()
-    pm.load(pluginsDir)
-    await new Promise((r) => setTimeout(r, 10))
-    // plugin-b should see undefined for 'key' (plugin-a's storage is isolated)
-    expect((global as any).__pluginBValue).toBeUndefined()
+    await new Promise((r) => setTimeout(r, 20))
+    const { pluginStorageGet } = await import('../../src/main/database')
+    // plugin-b should not see plugin-a's storage
+    const sawKey = pluginStorageGet('plugin-b', 'saw-key')
+    expect(sawKey).toBe('undefined')
   })
 
   it('pluginA sets key, pluginA gets key → "val"', async () => {
@@ -201,7 +217,9 @@ describe('PluginManager', () => {
       module.exports = {
         onLoad() {
           api.storage.set('mykey', 'myval').then(() => {
-            api.storage.get('mykey').then(v => { global.__selfValue = v })
+            api.storage.get('mykey').then(v => {
+              api.storage.set('retrieved', v)
+            })
           })
         }
       }
@@ -209,12 +227,14 @@ describe('PluginManager', () => {
     )
     const pm = new PluginManager()
     pm.load(pluginsDir)
-    await new Promise((r) => setTimeout(r, 10))
-    expect((global as any).__selfValue).toBe('myval')
+    await new Promise((r) => setTimeout(r, 20))
+    const { pluginStorageGet } = await import('../../src/main/database')
+    const retrieved = pluginStorageGet('plugin-self', 'retrieved')
+    expect(retrieved).toBe('myval')
   })
 
-  it('emit "app:ready": handler registered via api.on() fires', () => {
-    let fired = false
+  it('emit "app:ready": handler registered via api.on() fires', async () => {
+    // Use storage to track whether the event handler fired
     makePlugin(
       pluginsDir,
       'event-plugin',
@@ -222,7 +242,7 @@ describe('PluginManager', () => {
       `
       module.exports = {
         onLoad() {
-          api.on('app:ready', () => { global.__eventFired = true })
+          api.on('app:ready', () => { api.storage.set('fired', 'yes') })
         }
       }
       `
@@ -230,10 +250,14 @@ describe('PluginManager', () => {
     const pm = new PluginManager()
     pm.load(pluginsDir)
     pm.emit('app:ready')
-    expect((global as any).__eventFired).toBe(true)
+    // storage.set is synchronous inside the plugin (it calls pluginStorageSet directly)
+    const { pluginStorageGet } = await import('../../src/main/database')
+    const fired = pluginStorageGet('event-plugin', 'fired')
+    expect(fired).toBe('yes')
   })
 
-  it('emit: handler that throws → no crash, other handlers still fire', () => {
+  it('emit: handler that throws → no crash, other handlers still fire', async () => {
+    // Use storage as signal carrier for the second handler
     makePlugin(
       pluginsDir,
       'throws-plugin',
@@ -242,7 +266,7 @@ describe('PluginManager', () => {
       module.exports = {
         onLoad() {
           api.on('app:ready', () => { throw new Error('handler crash') })
-          api.on('app:ready', () => { global.__secondHandlerFired = true })
+          api.on('app:ready', () => { api.storage.set('second', 'fired') })
         }
       }
       `
@@ -250,6 +274,8 @@ describe('PluginManager', () => {
     const pm = new PluginManager()
     pm.load(pluginsDir)
     expect(() => pm.emit('app:ready')).not.toThrow()
-    expect((global as any).__secondHandlerFired).toBe(true)
+    const { pluginStorageGet } = await import('../../src/main/database')
+    const second = pluginStorageGet('throws-plugin', 'second')
+    expect(second).toBe('fired')
   })
 })

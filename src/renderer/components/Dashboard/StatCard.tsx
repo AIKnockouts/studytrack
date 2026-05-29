@@ -9,21 +9,21 @@ interface StatCardProps {
 
 const StatCard: React.FC<StatCardProps> = ({ label, value, subLabel, icon }) => {
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 flex items-start gap-3 shadow-sm">
+    <div className="bg-[#111111] rounded-xl border border-[#222222] p-4 flex items-start gap-3">
       {icon && (
-        <div className="text-gray-400 dark:text-gray-500 mt-0.5 shrink-0 text-xl">
+        <div className="text-[#555555] mt-0.5 shrink-0 text-base">
           {icon}
         </div>
       )}
       <div className="min-w-0">
-        <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">
+        <p className="text-xs uppercase tracking-wider text-[#888888] mb-1">
           {label}
         </p>
-        <p className="text-2xl font-bold text-gray-900 dark:text-gray-100 leading-none">
+        <p className="text-2xl font-semibold text-[#f5f5f5] leading-none">
           {value}
         </p>
         {subLabel && (
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-xs text-[#555555] mt-1">
             {subLabel}
           </p>
         )}

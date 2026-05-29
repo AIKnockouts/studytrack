@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import type { Settings } from '../../shared/types'
 import { DEFAULT_SETTINGS } from '../../shared/types'
-import CategoryManager from '../components/Settings/CategoryManager'
+import { CategoryManager } from '../components/Settings/CategoryManager'
 import PluginList from '../components/Settings/PluginList'
 
 // ---- Types ------------------------------------------------------------------
@@ -30,10 +30,10 @@ interface LabeledRowProps {
 }
 
 const LabeledRow: React.FC<LabeledRowProps> = ({ label, htmlFor, children }) => (
-  <div className="flex items-center justify-between gap-6 py-2">
+  <div className="flex items-center justify-between gap-6 py-2.5">
     <label
       htmlFor={htmlFor}
-      className="text-sm text-gray-700 dark:text-gray-300 flex-1 cursor-pointer select-none"
+      className="text-sm text-[#f5f5f5] flex-1 cursor-pointer select-none"
     >
       {label}
     </label>
@@ -58,16 +58,15 @@ const ToggleSwitch: React.FC<ToggleSwitchProps> = ({ id, checked, onChange }) =>
     onClick={() => onChange(!checked)}
     className={[
       'relative inline-flex h-5 w-9 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent',
-      'transition-colors duration-200 ease-in-out',
-      'focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900',
-      checked ? 'bg-indigo-600' : 'bg-gray-200 dark:bg-gray-600',
+      'transition-colors duration-200 ease-in-out focus:outline-none',
+      checked ? 'bg-[var(--accent-color)]' : 'bg-[#333333]',
     ]
       .join(' ')
       .trim()}
   >
     <span
       className={[
-        'pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow',
+        'pointer-events-none inline-block h-4 w-4 rounded-full bg-[#f5f5f5]',
         'transform transition duration-200 ease-in-out',
         checked ? 'translate-x-4' : 'translate-x-0',
       ]
@@ -130,21 +129,21 @@ const NumberInput: React.FC<NumberInputProps> = ({ id, value, min, max, unit, on
           onChange={handleChange}
           className={[
             'w-20 px-2 py-1 rounded-lg border text-sm text-right',
-            'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100',
-            'focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent',
+            'bg-[#111111] text-[#f5f5f5]',
+            'focus:outline-none focus:border-[var(--accent-color)]',
             error
-              ? 'border-red-400 dark:border-red-500'
-              : 'border-gray-300 dark:border-gray-600',
+              ? 'border-red-500/50'
+              : 'border-[#333333]',
           ]
             .join(' ')
             .trim()}
         />
         {unit && (
-          <span className="text-xs text-gray-500 dark:text-gray-400 w-8">{unit}</span>
+          <span className="text-xs text-[#888888] w-8">{unit}</span>
         )}
       </div>
       {error && (
-        <p className="text-xs text-red-500 dark:text-red-400">{error}</p>
+        <p className="text-xs text-red-400">{error}</p>
       )}
     </div>
   )
@@ -159,10 +158,10 @@ interface SectionProps {
 
 const Section: React.FC<SectionProps> = ({ title, children }) => (
   <div className="mb-6">
-    <h3 className="text-xs font-semibold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-3">
+    <h3 className="text-xs uppercase tracking-widest text-[#888888] mb-3">
       {title}
     </h3>
-    <div className="divide-y divide-gray-100 dark:divide-gray-800">{children}</div>
+    <div className="divide-y divide-[#1a1a1a]">{children}</div>
   </div>
 )
 
@@ -252,15 +251,15 @@ const TimerTab: React.FC<TimerTabProps> = ({ settings, onSet }) => (
     </Section>
 
     <Section title="Partial sessions">
-      <div className="py-2 flex flex-col gap-2">
+      <div className="py-2.5 flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <label
             htmlFor="partial_threshold"
-            className="text-sm text-gray-700 dark:text-gray-300"
+            className="text-sm text-[#f5f5f5]"
           >
             Partial session threshold
           </label>
-          <span className="text-sm font-medium text-indigo-600 dark:text-indigo-400 w-12 text-right">
+          <span className="text-sm font-medium text-[var(--accent-color)] w-12 text-right">
             {settings.partial_threshold}%
           </span>
         </div>
@@ -271,9 +270,9 @@ const TimerTab: React.FC<TimerTabProps> = ({ settings, onSet }) => (
           max={100}
           value={settings.partial_threshold}
           onChange={(e) => onSet('partial_threshold', Number(e.target.value))}
-          className="w-full h-2 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+          className="w-full h-1.5 rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)] bg-[#222222]"
         />
-        <p className="text-xs text-gray-400 dark:text-gray-500">
+        <p className="text-xs text-[#555555]">
           Sessions stopped below this percentage of the planned time are still logged as partial.
         </p>
       </div>
@@ -325,7 +324,7 @@ const AppearanceTab: React.FC<AppearanceTabProps> = ({ settings, onSet }) => {
     <div>
       <Section title="Theme">
         <div className="py-3">
-          <p className="text-sm text-gray-700 dark:text-gray-300 mb-3">Color scheme</p>
+          <p className="text-sm text-[#888888] mb-3">Color scheme</p>
           <div className="flex gap-2">
             {themeOptions.map((opt) => (
               <button
@@ -333,11 +332,10 @@ const AppearanceTab: React.FC<AppearanceTabProps> = ({ settings, onSet }) => {
                 type="button"
                 onClick={() => handleThemeChange(opt.value)}
                 className={[
-                  'flex-1 py-2 px-3 rounded-lg border text-sm font-medium transition-colors',
-                  'focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900',
+                  'flex-1 py-2 px-3 rounded-lg border text-sm font-medium transition-colors focus:outline-none',
                   settings.theme === opt.value
-                    ? 'bg-indigo-600 border-indigo-600 text-white'
-                    : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-gray-400 dark:hover:border-gray-500',
+                    ? 'bg-[var(--accent-color)] border-[var(--accent-color)] text-white'
+                    : 'bg-transparent border-[#333333] text-[#888888] hover:border-[#444444] hover:text-[#f5f5f5]',
                 ]
                   .join(' ')
                   .trim()}
@@ -352,7 +350,7 @@ const AppearanceTab: React.FC<AppearanceTabProps> = ({ settings, onSet }) => {
       <Section title="Accent color">
         <LabeledRow label="Accent color" htmlFor="accent_color">
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-500 dark:text-gray-400 font-mono">
+            <span className="text-sm text-[#888888] font-mono">
               {settings.accent_color}
             </span>
             <input
@@ -360,7 +358,7 @@ const AppearanceTab: React.FC<AppearanceTabProps> = ({ settings, onSet }) => {
               type="color"
               value={settings.accent_color}
               onChange={(e) => handleAccentChange(e.target.value)}
-              className="h-8 w-10 cursor-pointer rounded border border-gray-300 dark:border-gray-600 bg-transparent p-0.5"
+              className="h-8 w-10 cursor-pointer rounded border border-[#333333] bg-transparent p-0.5"
             />
           </div>
         </LabeledRow>
@@ -388,7 +386,7 @@ const DataTab: React.FC<DataTabProps> = ({ settings, onSet }) => {
           <div>
             <label
               htmlFor="data_dir"
-              className="block text-sm text-gray-700 dark:text-gray-300 mb-1"
+              className="block text-sm text-[#f5f5f5] mb-1"
             >
               Data folder
             </label>
@@ -400,14 +398,14 @@ const DataTab: React.FC<DataTabProps> = ({ settings, onSet }) => {
               placeholder="e.g. /Users/you/.studytrack"
               className={[
                 'w-full px-3 py-2 rounded-lg border text-sm',
-                'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100',
-                'border-gray-300 dark:border-gray-600',
-                'focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent',
+                'bg-[#111111] text-[#f5f5f5] placeholder-[#555555]',
+                'border-[#333333]',
+                'focus:outline-none focus:border-[var(--accent-color)]',
               ]
                 .join(' ')
                 .trim()}
             />
-            <p className="mt-1.5 text-xs text-amber-600 dark:text-amber-400">
+            <p className="mt-1.5 text-xs text-amber-400/70">
               Changing the data folder takes effect after restarting the app.
             </p>
           </div>
@@ -417,11 +415,8 @@ const DataTab: React.FC<DataTabProps> = ({ settings, onSet }) => {
             onClick={handleOpenDataDir}
             className={[
               'w-full sm:w-auto px-4 py-2 rounded-lg border text-sm font-medium transition-colors',
-              'bg-white dark:bg-gray-800',
-              'border-gray-300 dark:border-gray-600',
-              'text-gray-700 dark:text-gray-300',
-              'hover:bg-gray-50 dark:hover:bg-gray-700',
-              'focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900',
+              'bg-transparent border-[#333333] text-[#f5f5f5]',
+              'hover:bg-[#1a1a1a] focus:outline-none',
             ]
               .join(' ')
               .trim()}
@@ -455,20 +450,19 @@ const SettingsView: React.FC = () => {
   }
 
   return (
-    <div className="flex h-full min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex h-full min-h-screen bg-[#0a0a0a]">
       {/* Left tab strip */}
-      <nav className="w-44 shrink-0 border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 py-6 px-3 flex flex-col gap-1">
+      <nav className="w-44 shrink-0 border-r border-[#1a1a1a] bg-[#0a0a0a] py-6 px-2 flex flex-col gap-0.5">
         {TABS.map((tab) => (
           <button
             key={tab.id}
             type="button"
             onClick={() => setActiveTab(tab.id)}
             className={[
-              'w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-              'focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-1 dark:focus:ring-offset-gray-900',
+              'w-full text-left px-3 py-2 rounded-lg text-sm transition-colors focus:outline-none',
               activeTab === tab.id
-                ? 'bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300'
-                : 'text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-gray-200',
+                ? 'bg-[#1a1a1a] text-[#f5f5f5]'
+                : 'text-[#888888] hover:bg-[#111111] hover:text-[#f5f5f5]',
             ]
               .join(' ')
               .trim()}
@@ -480,7 +474,7 @@ const SettingsView: React.FC = () => {
 
       {/* Content area */}
       <main className="flex-1 overflow-y-auto py-8 px-8 max-w-2xl">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-6">
+        <h2 className="text-lg font-semibold text-[#f5f5f5] mb-6">
           {TABS.find((t) => t.id === activeTab)?.label}
         </h2>
 
@@ -502,7 +496,7 @@ const SettingsView: React.FC = () => {
 
         {activeTab === 'plugins' && (
           <div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            <p className="text-sm text-[#888888] mb-4">
               Manage installed plugins. Toggling a plugin requires a restart to take full effect.
             </p>
             <PluginList />
