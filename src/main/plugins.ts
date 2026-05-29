@@ -106,6 +106,8 @@ export class PluginManager {
       exports: {} as Record<string, unknown>,
       console,
       api,
+      global: globalThis,
+      globalThis,
     }
     sandbox.exports = sandbox.module.exports
 
