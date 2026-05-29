@@ -47,8 +47,14 @@ export default function SkylineView() {
       if (cancelled) return
       setSessions(sessionsRes.data ?? [])
       setCategories(categoriesRes.data ?? [])
-      setAccentColor(settingsRes?.accent_color ?? '#6366f1')
+      const accent = settingsRes.data?.accent_color
+      setAccentColor(typeof accent === 'string' ? accent : '#6366f1')
       setIsLoading(false)
+    }).catch((e) => {
+      if (!cancelled) {
+        console.error('[SkylineView] failed to load data:', e)
+        setIsLoading(false)
+      }
     })
 
     return () => {

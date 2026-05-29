@@ -357,15 +357,19 @@ const DashboardView: React.FC = () => {
 
   const fetchData = useCallback(async () => {
     setIsLoading(true)
-    const [sessionsRes, categoriesRes, accentRes] = await Promise.all([
-      window.api.sessions.getAll(),
-      window.api.categories.getAll(),
-      window.api.settings.get('accent_color'),
-    ])
-    setSessions(sessionsRes.data ?? [])
-    setCategories(categoriesRes.data ?? [])
-    if (typeof accentRes.data === 'string') {
-      setAccentColor(accentRes.data)
+    try {
+      const [sessionsRes, categoriesRes, accentRes] = await Promise.all([
+        window.api.sessions.getAll(),
+        window.api.categories.getAll(),
+        window.api.settings.get('accent_color'),
+      ])
+      setSessions(sessionsRes.data ?? [])
+      setCategories(categoriesRes.data ?? [])
+      if (typeof accentRes.data === 'string') {
+        setAccentColor(accentRes.data)
+      }
+    } catch (e) {
+      console.error('[DashboardView] fetchData error:', e)
     }
     setIsLoading(false)
   }, [])

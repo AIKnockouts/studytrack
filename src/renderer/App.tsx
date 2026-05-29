@@ -35,9 +35,9 @@ export default function App() {
         if (typeof window.api === 'undefined') return
 
         const settings = await window.api.settings.getAll()
-        if (!settings) return
+        if (!settings?.data) return
 
-        const { accent_color } = settings
+        const accent_color = settings.data['accent_color'] as string | undefined
 
         if (accent_color) {
           document.documentElement.style.setProperty('--accent-color', accent_color)

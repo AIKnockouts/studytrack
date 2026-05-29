@@ -12,12 +12,12 @@ const SubjectDropdown: React.FC<SubjectDropdownProps> = ({ value, onChange, disa
 
   useEffect(() => {
     window.api.categories.getAll().then((response) => {
-      if (response.data) {
-        const active = response.data
-          .filter((c) => c.archived_at === null)
-          .sort((a, b) => a.sort_order - b.sort_order)
-        setCategories(active)
-      }
+      const active = (response.data ?? [])
+        .filter((c) => c.archived_at === null)
+        .sort((a, b) => a.sort_order - b.sort_order)
+      setCategories(active)
+    }).catch((e) => {
+      console.error('[SubjectDropdown] failed to load categories:', e)
     })
   }, [])
 

@@ -123,9 +123,10 @@ const PluginList: React.FC = () => {
 
   useEffect(() => {
     window.api.plugins.getInstalled().then((response) => {
-      if (response.data) {
-        setPlugins(response.data)
-      }
+      setPlugins(response.data ?? [])
+      setIsLoading(false)
+    }).catch((e) => {
+      console.error('[PluginList] failed to load plugins:', e)
       setIsLoading(false)
     })
   }, [])

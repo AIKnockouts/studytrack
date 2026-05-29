@@ -12,17 +12,22 @@ export default function HistoryView() {
 
   async function fetchData(currentFilter: SessionFilter) {
     setIsLoading(true)
-    const [sessionsRes, categoriesRes] = await Promise.all([
-      window.api.sessions.getAll(currentFilter),
-      window.api.categories.getAll(),
-    ])
-    if (sessionsRes.data) setSessions(sessionsRes.data)
-    if (categoriesRes.data) setCategories(categoriesRes.data)
+    try {
+      const [sessionsRes, categoriesRes] = await Promise.all([
+        window.api.sessions.getAll(currentFilter),
+        window.api.categories.getAll(),
+      ])
+      setSessions(sessionsRes.data ?? [])
+      setCategories(categoriesRes.data ?? [])
+    } catch (e) {
+      console.error('[HistoryView] fetchData error:', e)
+    }
     setIsLoading(false)
   }
 
   useEffect(() => {
     fetchData(filter)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filter])
 
   function handleFilterChange(newFilter: SessionFilter) {
