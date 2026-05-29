@@ -1,0 +1,10 @@
+{
+  "id": "obsidian-sync",
+  "name": "Obsidian Vault Sync",
+  "version": "0.1.0",
+  "description": "Syncs sessions as daily notes into an Obsidian vault.",
+  "author": "StudyTrack",
+  "main": "index.js",
+  "permissions": ["read:sessions", "read:categories", "write:filesystem"],
+  "settings_schema": []
+}

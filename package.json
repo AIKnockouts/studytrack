@@ -1,0 +1,46 @@
+{
+  "name": "studytrack",
+  "version": "1.0.0",
+  "description": "Local-first desktop study logger with GitHub-style heatmap",
+  "main": "out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "test": "vitest run --reporter=verbose",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "better-sqlite3": "^9.6.0",
+    "howler": "^2.2.4",
+    "node-notifier": "^10.0.1",
+    "uuid": "^9.0.1",
+    "zustand": "^4.5.2",
+    "recharts": "^2.12.7"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/better-sqlite3": "^7.6.10",
+    "@types/howler": "^2.2.11",
+    "@types/node": "^20.14.9",
+    "@types/node-notifier": "^8.0.5",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@types/uuid": "^9.0.8",
+    "@vitejs/plugin-react": "^4.3.1",
+    "electron": "^31.6.0",
+    "electron-vite": "^2.3.0",
+    "jsdom": "^24.1.1",
+    "tailwindcss": "^3.4.4",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.39",
+    "typescript": "^5.5.3",
+    "vite": "^5.3.5",
+    "vitest": "^2.0.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}
